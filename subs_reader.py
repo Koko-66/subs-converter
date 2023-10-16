@@ -19,6 +19,8 @@ from openpyxl import Workbook
 """
 
 # %%
+
+
 def get_path_to_folder():
     """Ask user to provide path"""
     while True:
@@ -35,7 +37,7 @@ def get_path_to_folder():
 # %%
 
 
-def read_files(folder_path):
+def read_files(file_dir):
     for root, dirs, files in os.walk(file_dir):
         for file in files:
             if file.split(".")[-1] in ["vtt", "srt"]:
@@ -44,10 +46,12 @@ def read_files(folder_path):
                 file_content = []
                 with open(file_path, 'r', encoding='utf-8') as file:
                     file_content = [line for line in file]
-                    # all_content.append(file_content)
-                    save_file_list_to_excel(file_content, file)
-    # print(all_content)
-    # return all_content
+                    print(file_content)
+                    # for i, text in enumerate(file_content):
+                    with_counts = [[
+                        text, '', f'=LEN(A{i+1})', f'=LEN(B{i+1})', f'=IF(LEN(B{i+1})>LEN(A{i+1}),"Too long", "Ok")'] for i, text in enumerate(file_content)]
+                    print(with_counts)
+                    save_file_list_to_excel(with_counts, file)
 
 
 def save_file_list_to_excel(content, file):
@@ -55,8 +59,8 @@ def save_file_list_to_excel(content, file):
     wb = Workbook()
     ws = wb.active
     wb.create_sheet()
-
-    for row in enumerate(content):
+    ws.append(["Source", "Translation", "Source count", "Target count"])
+    for row in content:
         ws.append(row)
 
     wb.save(filename=f"{file.name}.xlsx")
