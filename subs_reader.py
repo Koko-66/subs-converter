@@ -2,22 +2,8 @@
 import os
 from openpyxl import Workbook
 import validators
-from formatting import format_header
+from formatting import apply_conditional_format, format_header
 
-
-"""
-1. Get a path to the folder - validate if valid path (separate function / module)
-2. Select path for the target file
-3. Interate over all files in a folder that are subtitles:
-- check if file  (vtt or srt):
-    - for each file that is, read line by line and write to Excel
-    - A = Source
-    - B = Target
-    - C = Source Length (`=LEN(A{i+1})`)
-    - D = Target Length (`=LEN(B{i+1})`)
-    - E = count ('=IF(LEN(B{i+1})>LEN(A{i+1}),"Too long", "Ok")')
-- if no files, go back to getting path
-"""
 
 # %%
 
@@ -32,7 +18,7 @@ def get_path_to_folder():
         except ValueError as error:
             print(f"{error} Try again.\n")
             continue
-        print("this is the path you provided")
+        print(f"this is the path you provided {path_input}")
         return folder_path
 
 # %%
@@ -53,10 +39,10 @@ def read_files(file_dir):
                         text, '',
                         f'=LEN(A{i+1})',
                         f'=LEN(B{i+1})',
-                        f'=IF(LEN(B{i+1})>LEN(A{i+1}),"Too long", "Ok")'] for i, text in enumerate(file_content, 1)]
+                        f'=IF(LEN(B{i+1})>LEN(A{i+1}),"Too long", "Ok")'] for i, text in
+                        enumerate(file_content, 1)]
 
                     save_file_list_to_excel(with_counts, file)
-
 
 
 def save_file_list_to_excel(content, file):
@@ -64,10 +50,11 @@ def save_file_list_to_excel(content, file):
     wb = Workbook()
     ws = wb.active
     wb.create_sheet()
-    
+
     ws.append(["Source", "Translation", "Source count", "Target count"])
     format_header(ws)
-    
+    apply_conditional_format(ws)
+
     for row in content:
         ws.append(row)
 
