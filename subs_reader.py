@@ -1,6 +1,8 @@
-#%%
+# %%
 import os
 import validators
+from openpyxl import Workbook
+
 
 """
 1. Get a path to the folder - validate if valid path (separate function / module)
@@ -16,7 +18,7 @@ import validators
 - if no files, go back to getting path
 """
 
-#%%
+# %%
 def get_path_to_folder():
     """Ask user to provide path"""
     while True:
@@ -30,6 +32,39 @@ def get_path_to_folder():
         print("this is the path you provided")
         return folder_path
 
-get_path_to_folder()
 # %%
 
+
+def read_files(folder_path):
+    for root, dirs, files in os.walk(file_dir):
+        for file in files:
+            if file.split(".")[-1] in ["vtt", "srt"]:
+                file_path = os.path.join(root, file)
+                # print(file)
+                file_content = []
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    file_content = [line for line in file]
+                    # all_content.append(file_content)
+                    save_file_list_to_excel(with_formulas, file)
+    # print(all_content)
+    # return all_content
+
+
+def save_file_list_to_excel(content, file):
+    """Save filenames to Excel file"""
+    wb = Workbook()
+    ws = wb.active
+    wb.create_sheet()
+
+    for row in enumerate(content):
+        ws.append(row)
+
+    wb.save(filename=f"{file.name}.xlsx")
+
+
+file_dir = get_path_to_folder()
+# subs_content = read_files(file_dir)
+read_files(file_dir)
+# save_file_list_to_excel(subs_content)
+
+# %%
