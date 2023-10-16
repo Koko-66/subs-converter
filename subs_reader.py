@@ -45,7 +45,7 @@ def read_files(folder_path):
                 with open(file_path, 'r', encoding='utf-8') as file:
                     file_content = [line for line in file]
                     # all_content.append(file_content)
-                    save_file_list_to_excel(with_formulas, file)
+                    save_file_list_to_excel(file_content, file)
     # print(all_content)
     # return all_content
 
